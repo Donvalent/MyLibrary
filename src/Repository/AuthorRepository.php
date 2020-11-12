@@ -19,6 +19,21 @@ class AuthorRepository extends ServiceEntityRepository
         parent::__construct($registry, Author::class);
     }
 
+    /**
+     * @return Author[]
+     */
+    public function findAllNames() : array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT author.name FROM author';
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAllAssociative();
+    }
+
     // /**
     //  * @return Author[] Returns an array of Author objects
     //  */
