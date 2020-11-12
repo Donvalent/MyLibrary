@@ -28,11 +28,11 @@ class Author
      * @ORM\ManyToMany(targetEntity=Book::class, inversedBy="authors")
      * @ORM\JoinTable(name="author_book")
      */
-    private $books;
+    private $book;
 
     public function __construct()
     {
-        $this->books = new ArrayCollection();
+        $this->book = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -55,23 +55,23 @@ class Author
     /**
      * @return Collection|Book[]
      */
-    public function getBooks(): Collection
+    public function getBook(): Collection
     {
-        return $this->books;
+        return $this->book;
     }
 
-    public function addBook(Book $books): self
+    public function addBook(Book $book): self
     {
-        if (!$this->books->contains($books)) {
-            $this->books[] = $books;
+        if (!$this->book->contains($book)) {
+            $this->book[] = $book;
         }
 
         return $this;
     }
 
-    public function removeBook(Book $books): self
+    public function removeBook(Book $book): self
     {
-        $this->books->removeElement($books);
+        $this->book->removeElement($book);
 
         return $this;
     }

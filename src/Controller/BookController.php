@@ -65,13 +65,11 @@ class BookController extends AbstractController
                         $authorId = $property[0];              }
             }
 
-            $author = new Author();
-
             $author = $this->getDoctrine()->getRepository(Author::class)->find($authorId);
 
             $book->setName($form->get('name')->getData());
             $book->setYear($form->get('year')->getData());
-            $book->addAuthor($author);
+            $author->addBook($book);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($book);
