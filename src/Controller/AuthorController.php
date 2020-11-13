@@ -28,7 +28,7 @@ class AuthorController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function createAuthor(Request $request)
+    public function createAuthor(Request $request) : Response
     {
         $author = new Author();
 

@@ -35,7 +35,7 @@ class BookController extends AbstractController
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function newBook(Request $request)
+    public function newBook(Request $request) : Response
     {
         $book = new Book();
 
@@ -94,7 +94,7 @@ class BookController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function editBook(Book $book, Request $request)
+    public function editBook(Book $book, Request $request) : Response
     {
         $form = $this->createFormBuilder($book)
             ->add('name', TextType::class)
