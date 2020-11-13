@@ -22,7 +22,11 @@ class BookController extends AbstractController
      */
     public function index(): Response
     {
+        $books = $this->getDoctrine()->getRepository(Book::class)->findAll();
 
+        return $this->render('book/index.html.twig', [
+            'books' => $books,
+        ]);
     }
 
     /**
@@ -39,7 +43,6 @@ class BookController extends AbstractController
             ->add('name', TextType::class)
             ->add('year', IntegerType::class)
             ->add('authors', EntityType::class, [
-                'placeholder' => 'Choice a champ',
                 'required' => true,
                 'class' => Author::class,
                 'choice_label' => 'name',
@@ -74,11 +77,69 @@ class BookController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($book);
             $em->flush();
+
+            $this->addFlash('success', 'Book Created!');
         }
 
-        return $this->render('book/index.html.twig', [
+        return $this->render('book/view.html.twig', [
             'form' => $form->createView(),
         ]);
 
+    }
+
+    /**
+     * @Route("/book/edit/{book}", name="edit_book")
+     *
+     * @param Book $book
+     * @param Request $request
+     * @return Response
+     */
+    public function editBook(Book $book, Request $request)
+    {
+        $form = $this->createFormBuilder($book)
+            ->add('name', TextType::class)
+            ->add('year', IntegerType::class)
+            ->add('authors', EntityType::class, [
+                'required' => true,
+                'class' => Author::class,
+                'choice_label' => 'name',
+                'choice_value' => 'id',
+                'attr' => array('class' => 'dropdown'),
+                'required' => true,
+                'multiple' => true,
+            ])
+            ->add('save', SubmitType::class, array('label' => 'Update Book'))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $authorId = 0;
+
+            foreach ($_POST as $item)
+            {
+                foreach ($item as $property)
+                {
+                    if (is_array($property))
+                        $authorId = $property[0];              }
+            }
+
+            $author = $this->getDoctrine()->getRepository(Author::class)->find($authorId);
+
+            $book->setName($form->get('name')->getData());
+            $book->setYear($form->get('year')->getData());
+            $author->addBook($book);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($book);
+            $em->flush();
+
+            $this->addFlash('success', 'Book Updated!');
+        }
+
+        return $this->render('book/view.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }
